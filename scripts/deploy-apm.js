@@ -58,7 +58,7 @@ module.exports = async (
   if (!ensAddress) {
     log('=========')
     log('Missing ENS! Deploying a custom ENS...')
-    ens = (await deployENS(null, { artifacts, owner, verbose: false })).ens
+    ens = await (await deployENS(null, { artifacts, owner, verbose: false })).ens
     ensAddress = ens.address
   } else {
     ens = ENS.at(ensAddress)
@@ -96,7 +96,7 @@ module.exports = async (
     apmRepoBase.address,
     ensSubdomainRegistrarBase.address,
     ensAddress,
-    '0x00'
+    ZERO_ADDR
   )
   await logDeploy(apmFactory, { verbose })
 

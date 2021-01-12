@@ -2,6 +2,8 @@
 
 This repo contains Aragon's reference implementation of [aragonOS](https://hack.aragon.org/docs/aragonos-intro.html).
 
+[Go Here for Conflux Network related deployment notes](./conflux.md)
+
 #### 🚨 Security review status: bug bounty
 aragonOS 4 has undergone two independent professional security reviews, and the issues raised have been resolved. However there is a [bug bounty program](https://wiki.aragon.org/dev/bug_bounty/) for rewarding hackers who find security vulnerabilities. There is a bounty pool of $250,000 USD, you can find more information [here](https://wiki.aragon.org/dev/bug_bounty/).
 

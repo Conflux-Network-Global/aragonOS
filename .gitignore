@@ -18,3 +18,5 @@ build/
 bytecode/
 bytecode_new/
 flattened_contracts/
+
+.env
