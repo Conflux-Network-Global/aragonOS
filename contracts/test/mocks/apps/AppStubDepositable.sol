@@ -10,8 +10,8 @@ contract AppStubDepositable is AragonApp, DepositableStorage {
         require(isDepositable());
     }
 
-    function initialize() onlyInit public {
-        initialized();
+    function initialize(uint256 epoch) onlyInit public {
+        initialized(epoch);
     }
 
     function enableDeposits() external {

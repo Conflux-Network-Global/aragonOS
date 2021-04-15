@@ -36,7 +36,8 @@ contract APMRegistryFactoryMock is APMInternalAppNames {
         bytes32 _tld,
         bytes32 _label,
         address _root,
-        bool _withoutNameRole
+        bool _withoutNameRole,
+        uint256 epoch
     )
         public
         returns (APMRegistry)
@@ -45,7 +46,7 @@ contract APMRegistryFactoryMock is APMInternalAppNames {
         bytes32 node = keccak256(abi.encodePacked(_tld, _label));
         ens.setSubnodeOwner(_tld, _label, this);
 
-        Kernel dao = daoFactory.newDAO(this);
+        Kernel dao = daoFactory.newDAO(this, epoch);
         ACL acl = ACL(dao.acl());
 
         acl.createPermission(this, dao, dao.APP_MANAGER_ROLE(), this);
@@ -88,10 +89,10 @@ contract APMRegistryFactoryMock is APMInternalAppNames {
 
         // Initialize
         ens.setOwner(node, ensSub);
-        ensSub.initialize(ens, node);
+        ensSub.initialize(ens, node, epoch);
 
         // This should fail since we haven't given all required permissions
-        apm.initialize(ensSub);
+        apm.initialize(ensSub, epoch);
 
         return apm;
     }

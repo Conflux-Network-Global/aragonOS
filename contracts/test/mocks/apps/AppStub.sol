@@ -13,8 +13,8 @@ contract AppStubStorage {
 contract AppStub is AragonApp, AppStubStorage {
     bytes32 public constant ROLE = keccak256("ROLE");
 
-    function initialize() onlyInit public {
-        initialized();
+    function initialize(uint256 epoch) onlyInit public {
+        initialized(epoch);
         stringTest = "hola";
     }
 

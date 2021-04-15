@@ -4,8 +4,8 @@ import "../../../common/Initializable.sol";
 
 
 contract InitializableStorageMock is Initializable {
-    function initialize() onlyInit public {
-        initialized();
+    function initialize(uint256 epoch) onlyInit public {
+        initialized(epoch);
     }
 
     function getInitializationBlockPosition() public pure returns (bytes32) {

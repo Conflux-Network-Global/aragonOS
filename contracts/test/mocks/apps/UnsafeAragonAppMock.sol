@@ -5,8 +5,8 @@ import "../../../kernel/IKernel.sol";
 
 
 contract UnsafeAragonAppMock is UnsafeAragonApp {
-    function initialize() public {
-        initialized();
+    function initialize(uint256 epoch) public {
+        initialized(epoch);
     }
 
     function getKernel() public view returns (IKernel) {

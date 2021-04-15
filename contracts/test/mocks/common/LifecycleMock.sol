@@ -5,8 +5,8 @@ import "../../../common/Petrifiable.sol";
 
 
 contract LifecycleMock is Initializable, Petrifiable {
-    function initializeMock() public {
-        initialized();
+    function initializeMock(uint256 epoch) public {
+        initialized(epoch);
     }
 
     function petrifyMock() public {

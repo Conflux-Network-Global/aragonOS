@@ -7,8 +7,8 @@ contract AppStubScriptRunner is AragonApp {
     event ReturnedBytes(bytes returnedBytes);
 
     // Initialization is required to access any of the real executors
-    function initialize() public {
-        initialized();
+    function initialize(uint256 epoch) public {
+        initialized(epoch);
     }
 
     function runScript(bytes script) public returns (bytes) {

@@ -5,8 +5,8 @@ import "../../../common/DepositableStorage.sol";
 
 
 contract AppStubConditionalRecovery is AragonApp, DepositableStorage {
-    function initialize() onlyInit public {
-        initialized();
+    function initialize(uint256 epoch) onlyInit public {
+        initialized(epoch);
         setDepositable(true);
     }
 
