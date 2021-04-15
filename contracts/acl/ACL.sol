@@ -73,8 +73,8 @@ contract ACL is IACL, TimeHelpers, AragonApp, ACLHelpers {
     * @notice Initialize an ACL instance and set `_permissionsCreator` as the entity that can create other permissions
     * @param _permissionsCreator Entity that will be given permission over createPermission
     */
-    function initialize(address _permissionsCreator) public onlyInit {
-        initialized();
+    function initialize(address _permissionsCreator, uint256 epoch) public onlyInit {
+        initialized(epoch);
         require(msg.sender == address(kernel()), ERROR_AUTH_INIT_KERNEL);
 
         _createPermission(_permissionsCreator, this, CREATE_PERMISSIONS_ROLE, _permissionsCreator);

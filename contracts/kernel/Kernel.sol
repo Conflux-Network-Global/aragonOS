@@ -40,15 +40,15 @@ contract Kernel is IKernel, KernelStorage, KernelAppIds, KernelNamespaceConstant
     * @param _baseAcl Address of base ACL app
     * @param _permissionsCreator Entity that will be given permission over createPermission
     */
-    function initialize(IACL _baseAcl, address _permissionsCreator) public onlyInit {
-        initialized();
+    function initialize(IACL _baseAcl, address _permissionsCreator, uint256 epoch) public onlyInit {
+        initialized(epoch);
 
         // Set ACL base
         _setApp(KERNEL_APP_BASES_NAMESPACE, KERNEL_DEFAULT_ACL_APP_ID, _baseAcl);
 
         // Create ACL instance and attach it as the default ACL app
         IACL acl = IACL(newAppProxy(this, KERNEL_DEFAULT_ACL_APP_ID));
-        acl.initialize(_permissionsCreator);
+        acl.initialize(_permissionsCreator, epoch);
         _setApp(KERNEL_APP_ADDR_NAMESPACE, KERNEL_DEFAULT_ACL_APP_ID, acl);
 
         recoveryVaultAppId = KERNEL_DEFAULT_VAULT_APP_ID;

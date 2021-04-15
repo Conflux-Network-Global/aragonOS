@@ -56,7 +56,7 @@ contract APMRegistryFactory is APMInternalAppNames {
     * @param _root Manager for the new aragonPM DAO
     * @return The new aragonPM's APMRegistry app
     */
-    function newAPM(bytes32 _tld, bytes32 _label, address _root) public returns (APMRegistry) {
+    function newAPM(bytes32 _tld, bytes32 _label, address _root, uint256 epoch) public returns (APMRegistry) {
         bytes32 node = keccak256(abi.encodePacked(_tld, _label));
 
         // Assume it is the test ENS
@@ -66,18 +66,18 @@ contract APMRegistryFactory is APMInternalAppNames {
             ens.setSubnodeOwner(_tld, _label, this);
         }
 
-        Kernel dao = daoFactory.newDAO(this);
+        Kernel dao = daoFactory.newDAO(this, epoch);
         ACL acl = ACL(dao.acl());
 
         acl.createPermission(this, dao, dao.APP_MANAGER_ROLE(), this);
 
         // Deploy app proxies
-        bytes memory noInit = new bytes(0);
+        // bytes memory noInit = new bytes(0);
         ENSSubdomainRegistrar ensSub = ENSSubdomainRegistrar(
             dao.newAppInstance(
                 keccak256(abi.encodePacked(node, keccak256(abi.encodePacked(ENS_SUB_APP_NAME)))),
                 ensSubdomainRegistrarBase,
-                noInit,
+                new bytes(0),
                 false
             )
         );
@@ -85,7 +85,7 @@ contract APMRegistryFactory is APMInternalAppNames {
             dao.newAppInstance(
                 keccak256(abi.encodePacked(node, keccak256(abi.encodePacked(APM_APP_NAME)))),
                 registryBase,
-                noInit,
+                new bytes(0),
                 false
             )
         );
@@ -107,17 +107,17 @@ contract APMRegistryFactory is APMInternalAppNames {
 
         // Initialize
         ens.setOwner(node, ensSub);
-        ensSub.initialize(ens, node);
-        apm.initialize(ensSub);
+        ensSub.initialize(ens, node, epoch);
+        apm.initialize(ensSub, epoch);
 
-        uint16[3] memory firstVersion;
-        firstVersion[0] = 1;
+        // uint16[3] memory firstVersion;
+        // firstVersion[0] = 1;
 
         acl.createPermission(this, apm, apm.CREATE_REPO_ROLE(), this);
 
-        apm.newRepoWithVersion(APM_APP_NAME, _root, firstVersion, registryBase, b("ipfs:apm"));
-        apm.newRepoWithVersion(ENS_SUB_APP_NAME, _root, firstVersion, ensSubdomainRegistrarBase, b("ipfs:enssub"));
-        apm.newRepoWithVersion(REPO_APP_NAME, _root, firstVersion, repoBase, b("ipfs:repo"));
+        apm.newRepoWithVersion(APM_APP_NAME, _root, [uint16(1), 0, 0], registryBase, b("ipfs:apm"), epoch);
+        apm.newRepoWithVersion(ENS_SUB_APP_NAME, _root, [uint16(1), 0, 0], ensSubdomainRegistrarBase, b("ipfs:enssub"), epoch);
+        apm.newRepoWithVersion(REPO_APP_NAME, _root, [uint16(1), 0, 0], repoBase, b("ipfs:repo"), epoch);
 
         configureAPMPermissions(acl, apm, _root);
 

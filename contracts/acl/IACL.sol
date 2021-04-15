@@ -6,7 +6,7 @@ pragma solidity ^0.4.24;
 
 
 interface IACL {
-    function initialize(address permissionsCreator) external;
+    function initialize(address permissionsCreator, uint256 epoch) external;
 
     // TODO: this should be external
     // See https://github.com/ethereum/solidity/issues/4832

@@ -35,8 +35,8 @@ contract APMRegistry is AragonApp, AppProxyFactory, APMInternalAppNames {
     * @notice Initialize this APMRegistry instance and set `_registrar` as the ENS subdomain registrar
     * @param _registrar ENSSubdomainRegistrar instance that holds registry root node ownership
     */
-    function initialize(ENSSubdomainRegistrar _registrar) public onlyInit {
-        initialized();
+    function initialize(ENSSubdomainRegistrar _registrar, uint256 epoch) public onlyInit {
+        initialized(epoch);
 
         registrar = _registrar;
         ens = registrar.ens();
@@ -54,8 +54,8 @@ contract APMRegistry is AragonApp, AppProxyFactory, APMInternalAppNames {
     * @param _name Repo name, must be ununsed
     * @param _dev Address that will be given permission to create versions
     */
-    function newRepo(string _name, address _dev) public auth(CREATE_REPO_ROLE) returns (Repo) {
-        return _newRepo(_name, _dev);
+    function newRepo(string _name, address _dev, uint256 epoch) public auth(CREATE_REPO_ROLE) returns (Repo) {
+        return _newRepo(_name, _dev, epoch);
     }
 
     /**
@@ -71,10 +71,11 @@ contract APMRegistry is AragonApp, AppProxyFactory, APMInternalAppNames {
         address _dev,
         uint16[3] _initialSemanticVersion,
         address _contractAddress,
-        bytes _contentURI
+        bytes _contentURI,
+        uint256 epoch
     ) public auth(CREATE_REPO_ROLE) returns (Repo)
     {
-        Repo repo = _newRepo(_name, this); // need to have permissions to create version
+        Repo repo = _newRepo(_name, this, epoch); // need to have permissions to create version
         repo.newVersion(_initialSemanticVersion, _contractAddress, _contentURI);
 
         // Give permissions to _dev
@@ -85,10 +86,10 @@ contract APMRegistry is AragonApp, AppProxyFactory, APMInternalAppNames {
         return repo;
     }
 
-    function _newRepo(string _name, address _dev) internal returns (Repo) {
+    function _newRepo(string _name, address _dev, uint256 epoch) internal returns (Repo) {
         require(bytes(_name).length > 0, ERROR_EMPTY_NAME);
 
-        Repo repo = newClonedRepo();
+        Repo repo = newClonedRepo(epoch);
 
         ACL(kernel().acl()).createPermission(_dev, repo, repo.CREATE_VERSION_ROLE(), _dev);
 
@@ -101,9 +102,9 @@ contract APMRegistry is AragonApp, AppProxyFactory, APMInternalAppNames {
         return repo;
     }
 
-    function newClonedRepo() internal returns (Repo repo) {
+    function newClonedRepo(uint256 epoch) internal returns (Repo repo) {
         repo = Repo(newAppProxy(kernel(), repoAppId()));
-        repo.initialize();
+        repo.initialize(epoch);
     }
 
     function repoAppId() internal view returns (bytes32) {

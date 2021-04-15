@@ -45,8 +45,8 @@ contract EVMScriptRegistry is IEVMScriptRegistry, EVMScriptRegistryConstants, Ar
     /**
     * @notice Initialize the registry
     */
-    function initialize() public onlyInit {
-        initialized();
+    function initialize(uint256 epoch) public onlyInit {
+        initialized(epoch);
         // Create empty record to begin executor IDs at 1
         executorsNextIndex = 1;
     }

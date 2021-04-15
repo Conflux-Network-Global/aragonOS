@@ -35,8 +35,8 @@ contract ENSSubdomainRegistrar is AragonApp, ENSConstants {
     * @param _ens Address of ENS registry
     * @param _rootNode Node to allocate subdomains under
     */
-    function initialize(AbstractENS _ens, bytes32 _rootNode) public onlyInit {
-        initialized();
+    function initialize(AbstractENS _ens, bytes32 _rootNode, uint256 epoch) public onlyInit {
+        initialized(epoch);
 
         // We need ownership to create subnodes
         require(_ens.owner(_rootNode) == address(this), ERROR_NO_NODE_OWNERSHIP);

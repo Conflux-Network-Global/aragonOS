@@ -39,13 +39,13 @@ contract DAOFactory {
     * @param _root Address that will be granted control to setup DAO permissions
     * @return Newly created DAO
     */
-    function newDAO(address _root) public returns (Kernel) {
+    function newDAO(address _root, uint256 epoch) public returns (Kernel) {
         Kernel dao = Kernel(new KernelProxy(baseKernel));
 
         if (address(regFactory) == address(0)) {
-            dao.initialize(baseACL, _root);
+            dao.initialize(baseACL, _root, epoch);
         } else {
-            dao.initialize(baseACL, this);
+            dao.initialize(baseACL, this, epoch);
 
             ACL acl = ACL(dao.acl());
             bytes32 permRole = acl.CREATE_PERMISSIONS_ROLE();
