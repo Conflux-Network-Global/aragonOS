@@ -3,7 +3,7 @@
   "version": "4.4.0",
   "description": "Core contracts for Aragon",
   "scripts": {
-    "compile": "truffle compile",
+    "compile": "cfxtruffle compile",
     "test": "TRUFFLE_TEST=true npm run ganache-cli:test",
     "test:gas": "GAS_REPORTER=true npm test",
     "test:gas:ci": "npm run test:gas && npx codechecks",
