@@ -15,6 +15,8 @@ const defaultOwner = process.env.OWNER
 const defaultDaoFactoryAddress = process.env.DAO_FACTORY
 const defaultENSAddress = process.env.ENS
 
+const network = Number(process.env.NETWORK_ID || 1)
+
 module.exports = async (
   truffleExecCallback,
   {
@@ -61,7 +63,7 @@ module.exports = async (
     ens = (await deployENS(null, { artifacts, owner, verbose: false })).ens
     ensAddress = ens.address
   } else {
-    ens = ENS.at(ensAddress)
+    ens = await ENS.at(ensAddress)
   }
 
   log('ENS:', ensAddress)
@@ -80,7 +82,7 @@ module.exports = async (
 
   let daoFactory
   if (daoFactoryAddress) {
-    daoFactory = DAOFactory.at(daoFactoryAddress)
+    daoFactory = await DAOFactory.at(daoFactoryAddress)
     const hasEVMScripts = await daoFactory.regFactory() !== ZERO_ADDR
 
     log(`Using provided DAOFactory (with${hasEVMScripts ? '' : 'out' } EVMScripts):`, daoFactoryAddress)
@@ -96,7 +98,7 @@ module.exports = async (
     apmRepoBase.address,
     ensSubdomainRegistrarBase.address,
     ensAddress,
-    '0x00'
+    ZERO_ADDR
   )
   await logDeploy(apmFactory, { verbose })
 
@@ -118,11 +120,13 @@ module.exports = async (
     }
   }
 
-  log('Deploying APM...')
-  const receipt = await apmFactory.newAPM(tldHash, labelHash, owner)
+  const epoch = await web3.cfx.getEpochNumber() - 100;
+  log(`Deploying APM (epoch: ${epoch})...`)
+  const receipt = await apmFactory.newAPM(tldHash, labelHash, owner, epoch)
 
   log('=========')
-  const apmAddr = receipt.logs.filter(l => l.event == 'DeployAPM')[0].args.apm
+  const apmAddrHex = receipt.logs.filter(l => l.event == 'DeployAPM')[0].args.apm
+  const apmAddr = web3.cfxsdk.format.address(apmAddrHex, network)
   log('# APM:')
   log('Address:', apmAddr)
   log('Transaction hash:', receipt.tx)
@@ -135,7 +139,7 @@ module.exports = async (
     return {
       apmFactory,
       ens,
-      apm: APMRegistry.at(apmAddr),
+      apm: await APMRegistry.at(apmAddr),
     }
   }
 }

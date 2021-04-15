@@ -5,6 +5,7 @@ const globalArtifacts = this.artifacts // Not injected unless called directly vi
 const globalWeb3 = this.web3 // Not injected unless called directly via truffle
 
 const defaultOwner = process.env.OWNER
+const network = Number(process.env.NETWORK_ID || 1)
 
 module.exports = async (
   truffleExecCallback,
@@ -33,7 +34,8 @@ module.exports = async (
   await logDeploy(factory, { verbose })
   const receipt = await factory.newENS(owner)
 
-  const ensAddr = receipt.logs.filter(l => l.event == 'DeployENS')[0].args.ens
+  const ensAddrHex = receipt.logs.filter(l => l.event == 'DeployENS')[0].args.ens
+  const ensAddr = web3.cfxsdk.format.address(ensAddrHex, network)
   log('====================')
   log('Deployed ENS:', ensAddr)
 
@@ -44,7 +46,7 @@ module.exports = async (
     truffleExecCallback()
   } else {
     return {
-      ens: ENS.at(ensAddr),
+      ens: await ENS.at(ensAddr),
       ensFactory: factory,
     }
   }
