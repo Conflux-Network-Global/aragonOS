@@ -30,9 +30,9 @@ module.exports = async (
   const ENSFactory = artifacts.require('ENSFactory')
 
   log('Deploying ENSFactory...')
-  const factory = await ENSFactory.new()
+  const factory = await ENSFactory.new({ from: owner })
   await logDeploy(factory, { verbose })
-  const receipt = await factory.newENS(owner)
+  const receipt = await factory.newENS(owner, { from: owner })
 
   const ensAddrHex = receipt.logs.filter(l => l.event == 'DeployENS')[0].args.ens
   const ensAddr = web3.cfxsdk.format.address(ensAddrHex, network)
