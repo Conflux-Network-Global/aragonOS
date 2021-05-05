@@ -40,7 +40,7 @@ module.exports = async (
   const APMRegistryFactory = artifacts.require('APMRegistryFactory')
   const ENS = artifacts.require('ENS')
 
-  const tldName = 'eth'
+  const tldName = 'cfx'
   const labelName = 'aragonpm'
   const tldHash = namehash(tldName)
   const labelHash = '0x'+keccak256(labelName)
